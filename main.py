@@ -2,53 +2,83 @@ from flask import Flask, render_template_string
 
 app = Flask(__name__)
 
+BUSINESS = {
+    "name": "Tacos San Juan",
+    "phone_display": "(859) 803-7584",
+    "phone_link": "+18598037584",
+    "address": "610 N Broadway St",
+    "city": "Georgetown, KY 40324",
+    "maps_url": (
+        "https://www.google.com/maps/search/"
+        "?api=1&query=610+N+Broadway+St+Georgetown+KY+40324"
+    ),
+}
+
 MENU = [
     {
         "name": "Street Tacos",
-        "description": "Three warm corn tortillas with your choice of steak, chicken, or pork, topped with onion and cilantro.",
-        "price": "$10.99",
+        "description": (
+            "Authentic street tacos with onion and cilantro. Choose from "
+            "steak, barbacoa, chicken, al pastor, chorizo, lengua, or tripe."
+        ),
+        "price": "From $2.00",
         "emoji": "🌮",
     },
     {
-        "name": "Loaded Burrito",
-        "description": "A large flour tortilla filled with steak, chicken, or pork, plus rice, beans, cheese, and fresh salsa.",
-        "price": "$11.99",
+        "name": "Grande Burrito",
+        "description": (
+            "Your choice of meat with cheese, rice, beans, lettuce, "
+            "tomatoes, and avocado."
+        ),
+        "price": "$8.00",
         "emoji": "🌯",
     },
     {
         "name": "Quesadilla",
-        "description": "A grilled flour tortilla loaded with melted cheese and your choice of steak, chicken, or pork.",
-        "price": "$9.99",
+        "description": (
+            "Large flour tortilla with cheese and your choice of meat, "
+            "served with rice and beans."
+        ),
+        "price": "$9.00",
         "emoji": "🧀",
     },
     {
-        "name": "Chips & Salsa",
-        "description": "Freshly prepared tortilla chips served with our house-made salsa.",
-        "price": "$4.49",
-        "emoji": "🥣",
+        "name": "Taco Salad",
+        "description": (
+            "A fresh bed of lettuce with steak or grilled chicken, "
+            "tomatoes, cheese, avocado, and sour cream."
+        ),
+        "price": "$8.50",
+        "emoji": "🥗",
     },
     {
-        "name": "Rice & Beans",
-        "description": "A generous serving of traditional Mexican rice and seasoned beans.",
-        "price": "$4.99",
-        "emoji": "🍚",
+        "name": "Carne Asada Fries",
+        "description": (
+            "French fries loaded with steak, melted cheese, pico de gallo, "
+            "and avocado."
+        ),
+        "price": "$11.00",
+        "emoji": "🍟",
     },
     {
-        "name": "Taco Combo",
-        "description": "Three tacos with your choice of meat, served with rice and beans.",
-        "price": "$13.99",
+        "name": "Molcajete",
+        "description": (
+            "Grilled steak, chicken, shrimp, chorizo, peppers, onions, "
+            "and melted cheese with rice and beans."
+        ),
+        "price": "House Favorite",
         "emoji": "🍽️",
     },
 ]
 
 HOURS = [
-    ("Monday", "11:00 AM – 8:00 PM"),
-    ("Tuesday", "11:00 AM – 8:00 PM"),
-    ("Wednesday", "11:00 AM – 8:00 PM"),
-    ("Thursday", "11:00 AM – 8:00 PM"),
-    ("Friday", "11:00 AM – 9:00 PM"),
-    ("Saturday", "11:00 AM – 9:00 PM"),
-    ("Sunday", "12:00 PM – 7:00 PM"),
+    ("Monday", "Call for hours"),
+    ("Tuesday", "Call for hours"),
+    ("Wednesday", "Call for hours"),
+    ("Thursday", "Call for hours"),
+    ("Friday", "Call for hours"),
+    ("Saturday", "Call for hours"),
+    ("Sunday", "Call for hours"),
 ]
 
 PAGE = """
@@ -56,24 +86,30 @@ PAGE = """
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <meta
-        name="description"
-        content="Taco San Juan serves fresh tacos, burritos, quesadillas and traditional Mexican favorites in Blanchester, Ohio."
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
     >
 
-    <title>Taco San Juan | Blanchester, Ohio</title>
+    <meta
+        name="description"
+        content="Tacos San Juan serves authentic Mexican food in Georgetown, Kentucky."
+    >
+
+    <title>Tacos San Juan | Georgetown, Kentucky</title>
 
     <style>
         :root {
-            --orange: #f36b21;
-            --dark-orange: #c94a0b;
+            --orange: #ef641f;
+            --orange-dark: #bd400b;
+            --green: #17673d;
             --cream: #fff8ef;
             --white: #ffffff;
-            --dark: #23170f;
-            --muted: #715e50;
-            --green: #257a48;
-            --shadow: 0 14px 36px rgba(70, 36, 13, 0.14);
+            --dark: #21150f;
+            --muted: #6d5a4d;
+            --border: rgba(239, 100, 31, 0.16);
+            --shadow: 0 18px 45px rgba(71, 37, 15, 0.14);
         }
 
         * {
@@ -87,18 +123,24 @@ PAGE = """
         }
 
         body {
-            font-family: Arial, Helvetica, sans-serif;
-            color: var(--dark);
             background: var(--cream);
+            color: var(--dark);
+            font-family: Arial, Helvetica, sans-serif;
             line-height: 1.6;
         }
 
+        img {
+            display: block;
+            width: 100%;
+        }
+
         a {
+            color: inherit;
             text-decoration: none;
         }
 
         .container {
-            width: min(1120px, 92%);
+            width: min(1140px, 92%);
             margin: auto;
         }
 
@@ -106,9 +148,10 @@ PAGE = """
             position: sticky;
             top: 0;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.97);
-            border-bottom: 1px solid rgba(243, 107, 33, 0.18);
-            box-shadow: 0 4px 18px rgba(40, 20, 8, 0.06);
+            background: rgba(255, 255, 255, 0.96);
+            border-bottom: 1px solid var(--border);
+            box-shadow: 0 5px 22px rgba(50, 25, 10, 0.07);
+            backdrop-filter: blur(12px);
         }
 
         .nav-content {
@@ -122,99 +165,101 @@ PAGE = """
         .logo {
             color: var(--orange);
             font-family: Georgia, serif;
-            font-size: 1.65rem;
-            font-weight: 800;
+            font-size: 1.7rem;
+            font-weight: 900;
         }
 
         .nav-links {
             display: flex;
             align-items: center;
-            gap: 25px;
+            gap: 24px;
         }
 
-        .nav-links a {
-            color: var(--dark);
-            font-weight: 700;
+        .nav-links > a {
+            font-weight: 800;
         }
 
-        .nav-links a:hover {
+        .nav-links > a:hover {
             color: var(--orange);
         }
 
-        .call-button,
-        .primary-button {
+        .button {
             display: inline-block;
             padding: 13px 22px;
             border-radius: 999px;
-            background: var(--orange);
-            color: white !important;
-            font-weight: 800;
+            font-weight: 900;
             transition: 0.2s ease;
-            box-shadow: 0 8px 20px rgba(243, 107, 33, 0.25);
         }
 
-        .call-button:hover,
-        .primary-button:hover {
-            background: var(--dark-orange);
+        .button:hover {
             transform: translateY(-2px);
         }
 
-        .secondary-button {
-            display: inline-block;
-            padding: 12px 21px;
-            border: 2px solid white;
-            border-radius: 999px;
-            color: white;
-            font-weight: 800;
-            transition: 0.2s ease;
+        .button-orange {
+            color: white !important;
+            background: var(--orange);
+            box-shadow: 0 9px 22px rgba(239, 100, 31, 0.28);
         }
 
-        .secondary-button:hover {
-            background: white;
+        .button-orange:hover {
+            background: var(--orange-dark);
+        }
+
+        .button-outline {
+            color: white;
+            border: 2px solid white;
+        }
+
+        .button-outline:hover {
             color: var(--orange);
+            background: white;
         }
 
         .hero {
-            min-height: 650px;
+            min-height: 690px;
             display: grid;
             place-items: center;
-            text-align: center;
             color: white;
+            text-align: center;
             background:
-                linear-gradient(rgba(25, 12, 5, 0.58), rgba(25, 12, 5, 0.67)),
-                url("https://images.unsplash.com/photo-1551504734-5ee1c4a1479b?auto=format&fit=crop&w=1800&q=85")
+                linear-gradient(
+                    rgba(24, 12, 5, 0.54),
+                    rgba(24, 12, 5, 0.72)
+                ),
+                url("/static/images/storefront.jpg")
                 center/cover no-repeat;
         }
 
         .hero-content {
-            max-width: 830px;
-            padding: 80px 0;
+            max-width: 850px;
+            padding: 100px 0;
         }
 
         .eyebrow {
             display: inline-block;
             margin-bottom: 18px;
-            padding: 8px 15px;
+            padding: 8px 16px;
+            border: 1px solid rgba(255, 255, 255, 0.45);
             border-radius: 999px;
-            background: rgba(255, 255, 255, 0.16);
-            border: 1px solid rgba(255, 255, 255, 0.35);
+            background: rgba(255, 255, 255, 0.15);
             font-size: 0.82rem;
-            font-weight: 800;
+            font-weight: 900;
             letter-spacing: 1.5px;
             text-transform: uppercase;
         }
 
         h1 {
+            margin-bottom: 22px;
             font-family: Georgia, serif;
-            font-size: clamp(3rem, 8vw, 6.5rem);
-            line-height: 0.98;
-            margin-bottom: 20px;
+            font-size: clamp(3.2rem, 8vw, 6.7rem);
+            line-height: 0.96;
+            text-shadow: 0 5px 20px rgba(0, 0, 0, 0.24);
         }
 
         .hero p {
-            max-width: 690px;
-            margin: 0 auto 30px;
-            font-size: clamp(1rem, 2vw, 1.25rem);
+            max-width: 700px;
+            margin: 0 auto 31px;
+            font-size: clamp(1.05rem, 2vw, 1.28rem);
         }
 
         .hero-buttons {
@@ -229,27 +274,30 @@ PAGE = """
         }
 
         .section-heading {
-            max-width: 680px;
-            margin: 0 auto 44px;
+            max-width: 700px;
+            margin: 0 auto 45px;
             text-align: center;
         }
 
-        .section-heading span {
+        .section-label {
             color: var(--orange);
-            font-weight: 900;
-            letter-spacing: 1.3px;
-            text-transform: uppercase;
             font-size: 0.82rem;
+            font-weight: 900;
+            letter-spacing: 1.4px;
+            text-transform: uppercase;
         }
 
-        .section-heading h2 {
-            margin: 8px 0 12px;
+        .section-heading h2,
+        .about-copy h2,
+        .visit-copy h2 {
+            margin: 8px 0 14px;
             font-family: Georgia, serif;
-            font-size: clamp(2.2rem, 5vw, 3.6rem);
-            line-height: 1.05;
+            font-size: clamp(2.3rem, 5vw, 3.7rem);
+            line-height: 1.06;
         }
 
-        .section-heading p {
+        .section-heading p,
+        .about-copy p {
             color: var(--muted);
         }
 
@@ -260,11 +308,10 @@ PAGE = """
         }
 
         .menu-card {
-            position: relative;
-            padding: 28px;
+            padding: 29px;
+            border: 1px solid var(--border);
+            border-radius: 23px;
             background: white;
-            border: 1px solid rgba(243, 107, 33, 0.15);
-            border-radius: 22px;
             box-shadow: var(--shadow);
             transition: 0.25s ease;
         }
@@ -277,30 +324,29 @@ PAGE = """
         .menu-icon {
             display: grid;
             place-items: center;
-            width: 56px;
-            height: 56px;
+            width: 58px;
+            height: 58px;
             margin-bottom: 18px;
-            border-radius: 16px;
-            background: #fff0e4;
-            font-size: 1.8rem;
+            border-radius: 17px;
+            background: #ffede1;
+            font-size: 1.85rem;
         }
 
         .menu-card h3 {
-            font-family: Georgia, serif;
-            font-size: 1.45rem;
             margin-bottom: 8px;
+            font-family: Georgia, serif;
+            font-size: 1.48rem;
         }
 
         .menu-card p {
             color: var(--muted);
-            padding-right: 35px;
         }
 
         .price {
             display: inline-block;
             margin-top: 18px;
             color: var(--orange);
-            font-size: 1.15rem;
+            font-size: 1.12rem;
             font-weight: 900;
         }
 
@@ -311,95 +357,154 @@ PAGE = """
         .about-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 55px;
             align-items: center;
+            gap: 58px;
         }
 
-        .about-photo {
-            min-height: 480px;
+        .about-photo img {
+            height: 500px;
+            object-fit: cover;
             border-radius: 28px;
-            background:
-                linear-gradient(rgba(243, 107, 33, 0.08), rgba(243, 107, 33, 0.08)),
-                url("https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=1200&q=85")
-                center/cover no-repeat;
             box-shadow: var(--shadow);
-        }
-
-        .about-copy h2 {
-            margin-bottom: 20px;
-            font-family: Georgia, serif;
-            font-size: clamp(2.2rem, 5vw, 3.6rem);
-            line-height: 1.08;
         }
 
         .about-copy p {
             margin-bottom: 17px;
-            color: var(--muted);
         }
 
         .features {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 13px;
-            margin-top: 28px;
+            gap: 12px;
+            margin-top: 29px;
         }
 
         .feature {
-            padding: 17px 12px;
-            border-radius: 14px;
+            padding: 17px 10px;
+            border-radius: 15px;
             background: var(--cream);
             text-align: center;
-            font-weight: 800;
+            font-weight: 900;
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: 1.25fr 1fr 1fr;
+            grid-template-rows: 245px 245px;
+            gap: 16px;
+        }
+
+        .gallery-card {
+            position: relative;
+            overflow: hidden;
+            border-radius: 22px;
+            background: #e8ded5;
+            box-shadow: var(--shadow);
+        }
+
+        .gallery-card:first-child {
+            grid-row: 1 / 3;
+        }
+
+        .gallery-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.35s ease;
+        }
+
+        .gallery-card:hover img {
+            transform: scale(1.04);
+        }
+
+        .gallery-caption {
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            left: 0;
+            padding: 30px 17px 15px;
+            color: white;
+            font-weight: 900;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.75));
         }
 
         .visit {
-            background: var(--orange);
             color: white;
+            background: var(--orange);
         }
 
         .visit-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 50px;
-        }
-
-        .visit h2 {
-            margin-bottom: 15px;
-            font-family: Georgia, serif;
-            font-size: clamp(2.2rem, 5vw, 3.5rem);
+            align-items: start;
+            gap: 52px;
         }
 
         .visit-copy p {
-            margin-bottom: 13px;
-            font-size: 1.06rem;
+            margin-bottom: 16px;
+            font-size: 1.07rem;
         }
 
-        .details-box {
-            padding: 28px;
-            border-radius: 22px;
+        .contact-card {
+            overflow: hidden;
+            border-radius: 24px;
             background: white;
             color: var(--dark);
             box-shadow: var(--shadow);
         }
 
-        .details-box h3 {
-            margin-bottom: 16px;
-            font-family: Georgia, serif;
-            font-size: 1.6rem;
+        .contact-image {
+            height: 210px;
+            object-fit: cover;
         }
 
-        .hours-row {
-            display: flex;
-            justify-content: space-between;
-            gap: 15px;
-            padding: 9px 0;
-            border-bottom: 1px solid #eee2d8;
+        .contact-details {
+            padding: 27px;
+        }
+
+        .contact-details h3 {
+            margin-bottom: 14px;
+            font-family: Georgia, serif;
+            font-size: 1.7rem;
+        }
+
+        .contact-row {
+            padding: 13px 0;
+            border-bottom: 1px solid #eee1d7;
+        }
+
+        .contact-row:last-child {
+            border-bottom: 0;
+        }
+
+        .contact-row span {
+            display: block;
+            color: var(--muted);
+            font-size: 0.87rem;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .contact-row strong {
+            display: block;
+            margin-top: 3px;
+            font-size: 1.04rem;
+        }
+
+        .map-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 19px;
+            border-radius: 999px;
+            color: white;
+            background: var(--green);
+            font-weight: 900;
         }
 
         footer {
-            padding: 32px 0;
-            color: #d9c9bd;
-            background: #21150f;
+            padding: 34px 0;
+            background: #20140e;
+            color: #d9c8bc;
             text-align: center;
         }
 
@@ -407,8 +512,8 @@ PAGE = """
             color: white;
         }
 
-        @media (max-width: 850px) {
-            .nav-links a:not(.call-button) {
+        @media (max-width: 900px) {
+            .nav-links > a:not(.button) {
                 display: none;
             }
 
@@ -421,23 +526,37 @@ PAGE = """
                 grid-template-columns: 1fr;
             }
 
-            .about-photo {
-                min-height: 380px;
+            .gallery-grid {
+                grid-template-columns: 1fr 1fr;
+                grid-template-rows: repeat(3, 270px);
+            }
+
+            .gallery-card:first-child {
+                grid-column: 1 / 3;
+                grid-row: auto;
             }
         }
 
-        @media (max-width: 560px) {
+        @media (max-width: 600px) {
             .logo {
-                font-size: 1.3rem;
+                font-size: 1.28rem;
             }
 
-            .call-button {
-                padding: 10px 15px;
-                font-size: 0.9rem;
+            .nav-content {
+                min-height: 68px;
+            }
+
+            .nav-links {
+                gap: 8px;
+            }
+
+            .nav-links .button {
+                padding: 10px 14px;
+                font-size: 0.86rem;
             }
 
             .hero {
-                min-height: 590px;
+                min-height: 620px;
             }
 
             section {
@@ -445,16 +564,21 @@ PAGE = """
             }
 
             .menu-grid,
-            .features {
+            .features,
+            .gallery-grid {
                 grid-template-columns: 1fr;
             }
 
-            .menu-card {
-                padding: 24px;
+            .gallery-grid {
+                grid-template-rows: repeat(5, 255px);
             }
 
-            .hours-row {
-                font-size: 0.91rem;
+            .gallery-card:first-child {
+                grid-column: auto;
+            }
+
+            .about-photo img {
+                height: 390px;
             }
         }
     </style>
@@ -463,13 +587,20 @@ PAGE = """
 <body>
     <nav>
         <div class="container nav-content">
-            <a class="logo" href="#home">Taco San Juan</a>
+            <a class="logo" href="#home">{{ business.name }}</a>
 
             <div class="nav-links">
                 <a href="#menu">Menu</a>
                 <a href="#about">Our Story</a>
-                <a href="#visit">Visit Us</a>
-                <a class="call-button" href="tel:8888888888">Call to Order</a>
+                <a href="#gallery">Photos</a>
+                <a href="#visit">Visit</a>
+
+                <a
+                    class="button button-orange"
+                    href="tel:{{ business.phone_link }}"
+                >
+                    Call to Order
+                </a>
             </div>
         </div>
     </nav>
@@ -477,19 +608,28 @@ PAGE = """
     <main>
         <section class="hero" id="home">
             <div class="container hero-content">
-                <div class="eyebrow">Fresh Mexican Food • Blanchester, Ohio</div>
+                <div class="eyebrow">
+                    Authentic Mexican Food • Georgetown, Kentucky
+                </div>
 
-                <h1>Bold flavor.<br>Made fresh.</h1>
+                <h1>Real flavor.<br>Made fresh.</h1>
 
                 <p>
-                    Fresh tacos, loaded burritos, cheesy quesadillas and
-                    traditional Mexican favorites prepared with care.
+                    Authentic street tacos, loaded burritos, quesadillas,
+                    seafood, and traditional Mexican favorites served locally
+                    in Georgetown.
                 </p>
 
                 <div class="hero-buttons">
-                    <a class="primary-button" href="#menu">Explore Our Menu</a>
-                    <a class="secondary-button" href="tel:8888888888">
-                        Call 888-888-8888
+                    <a class="button button-orange" href="#menu">
+                        Explore Our Menu
+                    </a>
+
+                    <a
+                        class="button button-outline"
+                        href="tel:{{ business.phone_link }}"
+                    >
+                        Call {{ business.phone_display }}
                     </a>
                 </div>
             </div>
@@ -498,11 +638,11 @@ PAGE = """
         <section id="menu">
             <div class="container">
                 <div class="section-heading">
-                    <span>Our Favorites</span>
-                    <h2>Made to satisfy</h2>
+                    <span class="section-label">Customer Favorites</span>
+                    <h2>Authentic food made to satisfy</h2>
                     <p>
-                        Choose steak, chicken, or pork and enjoy the fresh,
-                        comforting flavors of Taco San Juan.
+                        From street tacos and burritos to loaded fries and
+                        house specialties, there is something for everyone.
                     </p>
                 </div>
 
@@ -521,32 +661,100 @@ PAGE = """
 
         <section class="about" id="about">
             <div class="container about-grid">
-                <div class="about-photo" aria-label="Fresh tacos"></div>
+                <div class="about-photo">
+                    <img
+                        src="/static/images/dining-room.jpg"
+                        alt="Colorful dining room inside Tacos San Juan"
+                    >
+                </div>
 
                 <div class="about-copy">
-                    <div class="eyebrow" style="color:#f36b21; background:#fff0e4;">
-                        Our Story
-                    </div>
+                    <span class="section-label">Welcome to Tacos San Juan</span>
 
                     <h2>Local food with unforgettable flavor</h2>
 
                     <p>
-                        Taco San Juan is a local Blanchester taco shop focused
-                        on serving fresh Mexican favorites in a welcoming,
-                        family-friendly atmosphere.
+                        Tacos San Juan is a local Georgetown restaurant serving
+                        authentic Mexican dishes in a colorful and welcoming
+                        atmosphere.
                     </p>
 
                     <p>
-                        Whether you choose steak, chicken, or pork, every meal
-                        is prepared to order and served with the bold flavors
-                        you love.
+                        Stop in for street tacos, burritos, quesadillas,
+                        seafood, traditional platillos, and other freshly
+                        prepared favorites.
                     </p>
 
                     <div class="features">
-                        <div class="feature">🌮 Made Fresh</div>
-                        <div class="feature">🥩 Quality Meat</div>
-                        <div class="feature">📍 Local Shop</div>
+                        <div class="feature">🌮 Authentic</div>
+                        <div class="feature">🔥 Made Fresh</div>
+                        <div class="feature">📍 Local</div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="gallery">
+            <div class="container">
+                <div class="section-heading">
+                    <span class="section-label">Inside Tacos San Juan</span>
+                    <h2>See our restaurant and menu</h2>
+                    <p>
+                        Take a look at our Georgetown location, dining room,
+                        and authentic Mexican menu.
+                    </p>
+                </div>
+
+                <div class="gallery-grid">
+                    <figure class="gallery-card">
+                        <img
+                            src="/static/images/dining-room.jpg"
+                            alt="Dining room at Tacos San Juan"
+                        >
+                        <figcaption class="gallery-caption">
+                            Colorful, welcoming dining room
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-card">
+                        <img
+                            src="/static/images/storefront.jpg"
+                            alt="Tacos San Juan storefront"
+                        >
+                        <figcaption class="gallery-caption">
+                            Georgetown location
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-card">
+                        <img
+                            src="/static/images/menu-one.jpg"
+                            alt="Tacos San Juan menu"
+                        >
+                        <figcaption class="gallery-caption">
+                            Street tacos and favorites
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-card">
+                        <img
+                            src="/static/images/menu-two.jpg"
+                            alt="Tacos San Juan specialty menu"
+                        >
+                        <figcaption class="gallery-caption">
+                            Platillos and specialties
+                        </figcaption>
+                    </figure>
+
+                    <figure class="gallery-card">
+                        <img
+                            src="/static/images/digital-menu.jpg"
+                            alt="Digital menu inside Tacos San Juan"
+                        >
+                        <figcaption class="gallery-caption">
+                            More authentic choices
+                        </figcaption>
+                    </figure>
                 </div>
             </div>
         </section>
@@ -554,41 +762,90 @@ PAGE = """
         <section class="visit" id="visit">
             <div class="container visit-grid">
                 <div class="visit-copy">
-                    <h2>Come visit us</h2>
+                    <span class="eyebrow">Visit Us</span>
+
+                    <h2>Come enjoy Tacos San Juan</h2>
 
                     <p>
-                        <strong>Location:</strong><br>
-                        Blanchester, Ohio
+                        Visit us on North Broadway Street in Georgetown,
+                        Kentucky, or call ahead to place your order.
                     </p>
 
                     <p>
-                        <strong>Phone:</strong><br>
-                        <a href="tel:8888888888" style="color:white;">
-                            888-888-8888
+                        <strong>{{ business.address }}</strong><br>
+                        <strong>{{ business.city }}</strong>
+                    </p>
+
+                    <p>
+                        <strong>
+                            <a href="tel:{{ business.phone_link }}">
+                                {{ business.phone_display }}
+                            </a>
+                        </strong>
+                    </p>
+
+                    <div class="hero-buttons" style="justify-content:flex-start;">
+                        <a
+                            class="button button-outline"
+                            href="tel:{{ business.phone_link }}"
+                        >
+                            Call to Order
                         </a>
-                    </p>
 
-                    <p>
-                        Dine in, pick up your order, or call ahead and we’ll
-                        have your food ready.
-                    </p>
-
-                    <br>
-
-                    <a class="secondary-button" href="tel:8888888888">
-                        Call to Order
-                    </a>
+                        <a
+                            class="button button-outline"
+                            href="{{ business.maps_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Get Directions
+                        </a>
+                    </div>
                 </div>
 
-                <div class="details-box">
-                    <h3>Hours</h3>
+                <div class="contact-card">
+                    <img
+                        class="contact-image"
+                        src="/static/images/storefront.jpg"
+                        alt="Tacos San Juan at 610 North Broadway Street"
+                    >
 
-                    {% for day, time in hours %}
-                        <div class="hours-row">
-                            <strong>{{ day }}</strong>
-                            <span>{{ time }}</span>
+                    <div class="contact-details">
+                        <h3>Restaurant Information</h3>
+
+                        <div class="contact-row">
+                            <span>Address</span>
+                            <strong>
+                                {{ business.address }}<br>
+                                {{ business.city }}
+                            </strong>
                         </div>
-                    {% endfor %}
+
+                        <div class="contact-row">
+                            <span>Phone</span>
+                            <strong>
+                                <a href="tel:{{ business.phone_link }}">
+                                    {{ business.phone_display }}
+                                </a>
+                            </strong>
+                        </div>
+
+                        <div class="contact-row">
+                            <span>Hours</span>
+                            <strong>
+                                Call the restaurant for today's hours
+                            </strong>
+                        </div>
+
+                        <a
+                            class="map-button"
+                            href="{{ business.maps_url }}"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                        >
+                            Open in Google Maps
+                        </a>
+                    </div>
                 </div>
             </div>
         </section>
@@ -597,10 +854,12 @@ PAGE = """
     <footer>
         <div class="container">
             <p>
-                <strong>Taco San Juan</strong> • Blanchester, Ohio •
-                888-888-8888
+                <strong>{{ business.name }}</strong> •
+                {{ business.address }}, {{ business.city }} •
+                {{ business.phone_display }}
             </p>
-            <p>Fresh food. Local flavor. Made for you.</p>
+
+            <p>Authentic Mexican food served fresh in Georgetown.</p>
         </div>
     </footer>
 </body>
@@ -610,7 +869,12 @@ PAGE = """
 
 @app.route("/")
 def home():
-    return render_template_string(PAGE, menu=MENU, hours=HOURS)
+    return render_template_string(
+        PAGE,
+        business=BUSINESS,
+        menu=MENU,
+        hours=HOURS,
+    )
 
 
 @app.route("/health")
